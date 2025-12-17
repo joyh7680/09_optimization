@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  /* font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; */
+  font-family: var(--font-noto-sans-kr), -apple-system, BlinkMacSystemFont,
+    system-ui, sans-serif;
+}
+
+.font-display {
+  /* font-family: 'Playfair Display', serif; */
+  font-family: var(--font-playfair-display), serif;
+}
+
+.font-mono {
+  /* font-family: 'Roboto Mono', monospace; */
+  font-family: var(--font-roboto-mono), monospace;
+}
