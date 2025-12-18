@@ -10,13 +10,10 @@ import meanBy from "lodash/meanBy";
 import maxBy from "lodash/maxBy";
 import minBy from "lodash/minBy";
 import countBy from "lodash/countBy";
-import filter from "lodash/filter";
-import orderBy from "lodash/orderBy";
-import chunk from "lodash/chunk";
-import round from "lodash/round";
-import _ from "lodash";
+
 import { Product } from "./types";
 import StatCards from "./componets/StatCards";
+import Products from "./componets/Products";
 
 // ❌ 문제점 2: 큰 데이터(1000개의 아이템)를 인라인으로 정의 (별도 파일로 분리해야 함)
 // 실제 프로젝트에서는 이런 대용량 데이터를 별도 JSON 파일로 분리하거나 API를 통해 가져와야 합니다.
@@ -101,10 +98,10 @@ export default async function DataPage() {
   const products = await getProducts();
   const categories = await getCategories();
 
-  const [selectedCategory, setSelectedCategory] = useState<string>("전자기기");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 20;
+  // const [selectedCategory, setSelectedCategory] = useState<string>("전자기기");
+  // const [searchTerm, setSearchTerm] = useState("");
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const itemsPerPage = 20;
 
   // ❌ 문제점 1과 연관: lodash를 사용한 데이터 처리
 
@@ -119,22 +116,22 @@ export default async function DataPage() {
     // countBy는 { 전자기기: 200, 의류: 180, ... } 의 객체형태로 일반적으로 반환됌
   };
 
-  // 카테고리 선택 및 검색어 기반으로 필터링 되는 데이터
-  const filteredData = filter(products, (item) => {
-    const matchesCategory =
-      selectedCategory === "전체" || item.category === selectedCategory;
-    const matchesSearch =
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.description.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  // // 카테고리 선택 및 검색어 기반으로 필터링 되는 데이터
+  // const filteredData = filter(products, (item) => {
+  //   const matchesCategory =
+  //     selectedCategory === "전체" || item.category === selectedCategory;
+  //   const matchesSearch =
+  //     item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     item.description.toLowerCase().includes(searchTerm.toLowerCase());
+  //   return matchesCategory && matchesSearch;
+  // });
 
-  // 필터링된 데이터를 가격 내림차순으로 정렬시킨 데이터
-  const sortedData = orderBy(filteredData, ["price"], ["desc"]);
-  // 필터링 + 정렬까지 완료된 데이터를 itemsPerPage(한페이지당 아이템 개수) 단위로 나누어 청크로 만든 데이터
-  const paginatedData = chunk(sortedData, itemsPerPage);
-  // 청크된 데이터 기반으로 현재 페이지에 뿌려줄 실질적인 데이터
-  const currentPageData = paginatedData[currentPage - 1] || [];
+  // // 필터링된 데이터를 가격 내림차순으로 정렬시킨 데이터
+  // const sortedData = orderBy(filteredData, ["price"], ["desc"]);
+  // // 필터링 + 정렬까지 완료된 데이터를 itemsPerPage(한페이지당 아이템 개수) 단위로 나누어 청크로 만든 데이터
+  // const paginatedData = chunk(sortedData, itemsPerPage);
+  // // 청크된 데이터 기반으로 현재 페이지에 뿌려줄 실질적인 데이터
+  // const currentPageData = paginatedData[currentPage - 1] || [];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -149,22 +146,26 @@ export default async function DataPage() {
           </Link>
         </div>
 
-        <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+        <div className="bg-red-50 border-l-4 border-green-400 p-4 mb-6">
           <div className="flex">
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">
-                이 페이지의 문제점
+              <h3 className="text-sm font-medium text-green-800">
+                이 페이지의 문제점 해결
               </h3>
-              <div className="mt-2 text-sm text-red-700">
+              <div className="mt-2 text-sm text-green-700">
                 <ul className="list-disc list-inside space-y-1">
                   <li>
-                    1000개 아이템의 큰 배열을 인라인으로 정의 → 번들 크기 증가
+                    1000개 아이템의 큰 배열을 인라인으로 정의 → 번들 크기 증가 →
+                    API요청으로 데이터 패칭
                   </li>
                   <li>
                     복잡한 데이터 처리 로직, 컴포넌트들이 하나의 페이지
-                    클라이언트 컴포넌트로 구현 → 번들 크기 증가
+                    클라이언트 컴포넌트로 구현 → 번들 크기 증가 → 컴포넌트 분리
+                    후 페이지 컴포넌트를 서버 컴포넌트로 적용
                   </li>
-                  <li>lodash 전체를 import하여 데이터 처리</li>
+                  <li>
+                    lodash 전체를 import하여 데이터 처리 - 필요한 함수만 import{" "}
+                  </li>
                 </ul>
               </div>
             </div>
@@ -173,162 +174,9 @@ export default async function DataPage() {
 
         {/* 통계 카드 => 코드 분리하는 게 좋음 */}
         <StatCards stats={stats} />
-        {/* <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
-          <div className="bg-white rounded-lg shadow p-4">
-            <div className="text-sm text-gray-500">전체 상품</div>
-            <div className="text-2xl font-bold text-gray-900">
-              {stats.totalItems}
-            </div>
-          </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <div className="text-sm text-gray-500">평균 가격</div>
-            <div className="text-2xl font-bold text-gray-900">
-              {Math.round(stats.avgPrice).toLocaleString()}원
-            </div>
-          </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <div className="text-sm text-gray-500">최고가</div>
-            <div className="text-2xl font-bold text-gray-900">
-              {stats.maxPrice?.toLocaleString()}원
-            </div>
-          </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <div className="text-sm text-gray-500">최저가</div>
-            <div className="text-2xl font-bold text-gray-900">
-              {stats.minPrice?.toLocaleString()}원
-            </div>
-          </div>
-          <div className="bg-white rounded-lg shadow p-4 md:col-span-2">
-            <div className="text-sm text-gray-500">총 재고 가치</div>
-            <div className="text-2xl font-bold text-gray-900">
-              {Math.round(stats.totalValue).toLocaleString()}원
-            </div>
-          </div>
-        </div> */}
 
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          {/* 필터 영역 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                카테고리
-              </label>
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              >
-                <option value="전체">전체</option>
-                {Object.keys(categories).map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                검색
-              </label>
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="상품명 또는 설명으로 검색..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-          </div>
-
-          <div className="mt-4 flex gap-2 flex-wrap">
-            {Object.entries(stats.categories).map(([cat, count]) => (
-              <span
-                key={cat}
-                className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full"
-              >
-                {cat}: {count}개
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">
-            상품 목록 ({filteredData.length}개)
-          </h2>
-
-          {/* 상품 목록 테이블 */}
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    ID
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    상품명
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    카테고리
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    가격
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    재고
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    평점
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {currentPageData.map((item) => (
-                  <tr key={item.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {item.id}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {item.name}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {item.category}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {item.price.toLocaleString()}원
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {item.stock}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      ⭐ {item.rating}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* 페이지네이션 */}
-          <div className="mt-4 flex justify-center gap-2">
-            {Array.from(
-              { length: Math.min(paginatedData.length, 10) },
-              (_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCurrentPage(i + 1)}
-                  className={`px-3 py-1 rounded ${
-                    currentPage === i + 1
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  }`}
-                >
-                  {i + 1}
-                </button>
-              )
-            )}
-          </div>
-        </div>
+        {/* 상품관련  */}
+        <Products products={products} categories={categories} stats={stats} />
       </div>
     </div>
   );
