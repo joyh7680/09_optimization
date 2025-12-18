@@ -1,10 +1,5 @@
-"use client";
-
 import Link from "next/link";
-import { useState } from "react";
 
-// ❌ 문제점 1: lodash 전체를 import (트리쉐이킹 X)
-// import _ from "lodash";
 import sumBy from "lodash/sumBy";
 import meanBy from "lodash/meanBy";
 import maxBy from "lodash/maxBy";
@@ -14,6 +9,7 @@ import countBy from "lodash/countBy";
 import { Product } from "./types";
 import StatCards from "./componets/StatCards";
 import Products from "./componets/Products";
+
 
 // ❌ 문제점 2: 큰 데이터(1000개의 아이템)를 인라인으로 정의 (별도 파일로 분리해야 함)
 // 실제 프로젝트에서는 이런 대용량 데이터를 별도 JSON 파일로 분리하거나 API를 통해 가져와야 합니다.
