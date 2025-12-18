@@ -44,20 +44,29 @@ export default async function DashboardPage() {
           </Link>
         </div>
 
-        <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+        <div className="bg-green-50 border-l-4 border-green-400 p-4 mb-6">
           <div className="flex">
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">
-                이 페이지의 문제점
+              <h3 className="text-sm font-medium text-green-800">
+                이 페이지의 문제점 개선
               </h3>
-              <div className="mt-2 text-sm text-red-700">
+              <div className="mt-2 text-sm text-green-700">
                 <ul className="list-disc list-inside space-y-1">
-                  <li>
+                  {/* <li>
                     Chart.js와 react-chartjs-2(Chart.js 래핑 라이브러리)를 직접
-                    import → 코드 스플리팅 X
+                    import → 각
                   </li>
                   <li>lodash 전체를 import → 트리쉐이킹 X</li>
-                  <li>모든 차트 컴포넌트를 한번에 import → 선택적 로딩 X</li>
+                  <li>모든 차트 컴포넌트를 한번에 import → 선택적 로딩 X</li> */}
+                  <li>
+                    Chart.js와 react-chartjs-2(Chart.js 래핑 라이브러리)를 직접
+                    import → 각 차트 컴포넌트에서 필요한 것만 import
+                  </li>
+                  <li>
+                    모든 차트 컴포넌트를 한번에 import → 코드 스플리팅으로 동적
+                    import{" "}
+                  </li>
+                  <li>lodash 전체를 import → 필요한 함수만 import</li>
                 </ul>
               </div>
             </div>
