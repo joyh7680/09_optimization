@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Recipe } from "@/types/recipe";
+import Image from "next/image";
 
 interface RecipeCardProps {
   recipe: Recipe;
@@ -7,18 +8,27 @@ interface RecipeCardProps {
 
 export default function RecipeCard({ recipe }: RecipeCardProps) {
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden">
-      {/* ⚠️ SEO 최적화 안됨: article 태그 미사용 */}
-      {/* ⚠️ 이미지 최적화 안됨: 일반 img 태그 사용 */}
+    <article className="bg-white dark:bg-gray-900 rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden">
+      {/* ⚠️ SEO 최적화 안됨: article 태그 미사용 =>수정함 */}
+      {/* ⚠️ 이미지 최적화 안됨: 일반 img 태그 사용 =>수정함 */}
       <Link href={`/recipes/${recipe.id}`} className="block">
-        <div className="w-full h-48">
+        <figure className="relative w-full h-48">
+          <Image
+            src={recipe.image}
+            alt={`${recipe.title} 레시피 이미지`} //"딸기 스무디 레시피 이미지" 이렇게 나옴
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover"
+          />
+        </figure>
+        {/* <div className="w-full h-48">
           <img
             src={recipe.image}
             alt={recipe.title}
             className="w-full h-full object-cover"
           />
-        </div>
-        
+        </div> */}
+
         <div className="p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
@@ -28,26 +38,23 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
               ⏱ {recipe.cookingTime}분
             </span>
           </div>
-          
+
           <h2 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100 line-clamp-2">
             {recipe.title}
           </h2>
-          
+
           <p className="text-gray-600 dark:text-gray-400 text-sm mb-3 line-clamp-2">
             {recipe.description}
           </p>
-          
+
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-500 dark:text-gray-400">
               👥 {recipe.servings}인분
             </span>
-            <span className="text-yellow-500">
-              ⭐ {recipe.rating}
-            </span>
+            <span className="text-yellow-500">⭐ {recipe.rating}</span>
           </div>
         </div>
       </Link>
-    </div>
+    </article>
   );
 }
-
