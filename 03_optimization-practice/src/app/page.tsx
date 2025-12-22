@@ -42,7 +42,8 @@ export default function Home() {
           <Image
             src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=1200&h=600&fit=crop"
             alt="요리 키친"
-            fill
+            width={1200}
+            height={600}
             priority
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 80vw, 1024px"
             className="object-cover"
